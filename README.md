@@ -55,3 +55,11 @@
 <p align="center">
   <img src="https://github-readme-streak-stats.herokuapp.com/?user=asad1003&theme=radical" alt="GitHub Streak" />
 </p>
+
+---
+
+<h3>🐍 Snake Game</h3>
+
+<p align="center">
+  <img src="https://github.com/asad1003/asad1003/raw/output/github-contribution-grid-snake.svg" alt="snake" />
+</p>
