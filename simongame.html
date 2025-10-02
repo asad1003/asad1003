@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simon Game — Full Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-gradient: linear-gradient(135deg, #1e3c72, #2a5298);
+    --panel: rgba(255,255,255,0.92);
+    --ink:#111827; --muted:#6b7280;
+    --red:#ef4444; --green:#22c55e; --yellow:#facc15; --blue:#3b82f6;
+    --primary:#2a5298; --shadow:0 12px 32px rgba(0,0,0,.15);
+    --border:#cbd5e1;
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0; padding:0; height:100%; width:100%;
+    font:16px/1.55 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background:var(--bg-gradient); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .wrap{
+    display:flex; flex-direction:column; align-items:center;
+    background:var(--panel); backdrop-filter:blur(8px);
+    border-radius:18px; box-shadow:var(--shadow);
+    padding:20px; border:2px solid rgba(255,255,255,0.35);
+    width:100%; height:100%; overflow:auto;
+  }
+  h1{ margin:0 0 10px; font-weight:800; color:#1e3c72; text-align:center }
+  .row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; width:100%; }
+  .name{
+    padding:10px 12px; border-radius:10px; border:1px solid var(--border);
+    outline:none; background:#fff; flex:1; max-width:300px;
+  }
+  .info{
+    text-align:center; border:2px solid var(--border); border-radius:12px;
+    padding:10px; margin:10px 0; font-weight:700; background:rgba(255,255,255,0.85);
+    width:100%; max-width:340px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(110px, 30vmin));
+    grid-template-rows:repeat(2, minmax(110px, 30vmin));
+    gap:16px; justify-content:center; margin:10px 0;
+  }
+  .pad{
+    width:100%; height:100%; border-radius:18px; cursor:pointer; user-select:none;
+    box-shadow:inset 0 2px 0 rgba(0,0,0,.15);
+    transition:filter .12s ease, transform .06s ease, opacity .12s ease;
+    outline:none; border:3px solid transparent; opacity:.95;
+  }
+  .pad:active{ transform:translateY(1px) }
+  #red{background:var(--red)} #green{background:var(--green)} #yellow{background:var(--yellow)} #blue{background:var(--blue)}
+  .light{ filter:brightness(1.4) saturate(1.1); opacity:1; border-color:rgba(0,0,0,.15) }
+  .controls{ text-align:center; margin:6px 0 }
+  .btn{
+    background:var(--primary); color:#fff; border:0; border-radius:10px;
+    padding:10px 14px; font-weight:700; cursor:pointer;
+    box-shadow:0 10px 24px rgba(37,99,235,.25); transition:background .3s ease, transform .05s ease;
+  }
+  .btn:hover{ background:#1e3c72 }
+  .btn:active{ transform:translateY(1px) }
+  .btn:disabled{ opacity:.65; cursor:not-allowed }
+  .btn-danger{ background:#dc2626 }
+  .btn-danger:hover{ background:#b91c1c }
+  .btn-ghost{ background:transparent; color:#1e3c72; border:2px solid #1e3c72; }
+  .btn-ghost:hover{ background:rgba(30,60,114,0.08) }
+  .stack{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap }
+  .board{
+    margin-top:12px; border:2px solid var(--border); border-radius:12px;
+    padding:12px; background:rgba(255,255,255,0.85); width:100%; max-width:420px;
+  }
+  .board h3{ margin:0 0 8px; color:#1e3c72; text-align:center }
+  ol{ margin:0; padding-left:22px }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Simon Game</h1>
+
+    <div class="row">
+      <input id="playerName" class="name" placeholder="Your name" value="ASAD Ahmed" />
+    </div>
+
+    <div class="info">
+      <span id="score">Score: 0</span> &nbsp; | &nbsp; <span id="high">High Score: 0</span>
+    </div>
+
+    <div class="grid" aria-label="Simon Pads">
+      <div class="pad" id="red"    data-id="0" tabindex="0" aria-label="Red"></div>
+      <div class="pad" id="green"  data-id="1" tabindex="0" aria-label="Green"></div>
+      <div class="pad" id="yellow" data-id="2" tabindex="0" aria-label="Yellow"></div>
+      <div class="pad" id="blue"   data-id="3" tabindex="0" aria-label="Blue"></div>
+    </div>
+
+    <div class="controls">
+      <div class="stack">
+        <button id="startBtn" class="btn">Start Game</button>
+        <button id="deleteMineBtn" class="btn btn-ghost" title="Remove only the current player's score">Delete My Score</button>
+        <button id="resetBtn" class="btn btn-danger" title="Clear all saved scores">Reset Leaderboard</button>
+      </div>
+      <div id="status" class="muted" style="margin-top:6px;">Enter your name and press Start.</div>
+    </div>
+
+    <div class="board">
+      <h3>Leaderboard</h3>
+      <ol id="leaderboard"></ol>
+      <div class="muted" style="font-size:12px; text-align:center">Saves highest score per name in your browser.</div>
+    </div>
+  </div>
+
+<script>
+/* ================== Setup / State ================== */
+const pads     = ["red","green","yellow","blue"];
+const tonesHz  = [329.63, 261.63, 220.00, 392.00]; // R G Y B
+let sequence   = [];   // numbers 0..3
+let userStep   = 0;
+let running    = false;
+let accepting  = false;
+let speedMs    = 700;  // playback speed (decreases a bit as you progress)
+
+const scoreEl  = document.getElementById("score");
+const highEl   = document.getElementById("high");
+const nameEl   = document.getElementById("playerName");
+const startBtn = document.getElementById("startBtn");
+const statusEl = document.getElementById("status");
+const boardEl  = document.getElementById("leaderboard");
+const resetBtn = document.getElementById("resetBtn");
+const deleteMineBtn = document.getElementById("deleteMineBtn");
+
+/* ----- audio (works after user gesture) ----- */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function ensureAudio() {
+  if (audioCtx.state === "suspended") { audioCtx.resume(); }
+}
+function beep(i, ms=300){
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = "sine"; o.frequency.value = tonesHz[i];
+  g.gain.value = 0.0001;
+  o.connect(g); g.connect(audioCtx.destination);
+  const t = audioCtx.currentTime;
+  g.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + ms/1000);
+  o.start(); o.stop(t + ms/1000 + 0.02);
+}
+
+/* ----- storage: highest score per name ----- */
+const LS_HIGH = "simon.highscores.v1";
+function loadScores(){ try{return JSON.parse(localStorage.getItem(LS_HIGH))||{}}catch{ return {}; } }
+function saveScores(map){ localStorage.setItem(LS_HIGH, JSON.stringify(map)); }
+function getHigh(name){ return loadScores()[name] || 0; }
+function setHigh(name, score){
+  const map = loadScores(); map[name] = Math.max(score, map[name]||0); saveScores(map);
+}
+function delHigh(name){
+  const map = loadScores(); if(name in map){ delete map[name]; saveScores(map); }
+}
+function updateLeaderboard(){
+  const map = loadScores();
+  const items = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  boardEl.innerHTML = items.length ? items.map(([n,s])=>`<li>${n} — ${s}</li>`).join("") : "<li class='muted'>No scores yet</li>";
+}
+
+/* ================== UI helpers ================== */
+const $pad = id => document.getElementById(id);
+function flashPad(id, ms=speedMs){
+  const el = $pad(pads[id]);
+  el.classList.add("light"); beep(id, Math.min(ms, 350));
+  return new Promise(r=> setTimeout(()=>{ el.classList.remove("light"); r(); }, ms));
+}
+function rnd(){ return Math.floor(Math.random()*4); }
+function setScore(n){ scoreEl.textContent = "Score: " + n; }
+function setHighLabel(n){ highEl.textContent = "High Score: " + n; }
+function say(msg){ statusEl.textContent = msg; }
+
+/* ================== Game flow ================== */
+async function playBack(){
+  accepting = false;
+  await sleep(450);
+  for(let i=0;i<sequence.length;i++){
+    await flashPad(sequence[i]);
+    await sleep(160);
+  }
+  accepting = true;
+  say("Your turn…");
+}
+function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+
+function nextStep(){
+  sequence.push(rnd());
+  userStep = 0;
+  setScore(sequence.length - 1);
+  speedMs = Math.max(280, 700 - sequence.length*18); // slowly speed up
+  say("Memorize…");
+  playBack();
+}
+
+function startGame(){
+  if(running) return;
+  running = true; startBtn.disabled = true;
+  ensureAudio();
+  sequence = []; userStep = 0; speedMs = 700;
+  setScore(0); setHighLabel(getHigh(nameEl.value.trim()||"Player"));
+  nextStep();
+}
+
+function gameOver(){
+  running = false; accepting = false; startBtn.disabled = false;
+  const name = nameEl.value.trim() || "Player";
+  const score = sequence.length - 1;
+  setHigh(name, score);
+  setHighLabel(getHigh(name));
+  updateLeaderboard();
+  say(`Game over • Final score: ${score}. Press Start to play again.`);
+}
+
+/* ================== Input handling ================== */
+pads.forEach((pid, idx) => {
+  $pad(pid).addEventListener("click", () => handleInput(idx));
+  // keyboard support: R G Y B keys (and arrows)
+  $pad(pid).addEventListener("keydown", (e)=>{
+    const map = {r:0, g:1, y:2, b:3, ArrowLeft:0, ArrowUp:1, ArrowRight:3, ArrowDown:2};
+    const k = e.key?.toLowerCase();
+    if(map[e.key] !== undefined) handleInput(map[e.key]);
+    else if(k in map) handleInput(map[k]);
+  });
+});
+
+async function handleInput(i){
+  if(!running || !accepting) return;
+  await flashPad(i, 220);
+  if(i === sequence[userStep]){
+    userStep++;
+    if(userStep === sequence.length){
+      setScore(sequence.length);
+      accepting = false;
+      await sleep(500);
+      nextStep();
+    }
+  } else {
+    // quick error wiggle
+    const el = $pad(pads[i]);
+    el.animate([{transform:"translateY(0)"},{transform:"translateY(2px)"}], {duration:120});
+    gameOver();
+  }
+}
+
+/* ================== Wire up & init ================== */
+startBtn.addEventListener("click", startGame);
+nameEl.addEventListener("input", ()=> setHighLabel(getHigh(nameEl.value.trim()||"Player")));
+
+resetBtn.addEventListener("click", () => {
+  if (confirm("Clear ALL scores from the leaderboard? This cannot be undone.")) {
+    localStorage.removeItem(LS_HIGH);
+    updateLeaderboard();
+    setHighLabel(0);
+    say("Leaderboard has been cleared.");
+  }
+});
+
+deleteMineBtn.addEventListener("click", () => {
+  const name = nameEl.value.trim() || "Player";
+  if (!getHigh(name)) { say(`No saved score for "${name}".`); return; }
+  if (confirm(`Delete saved score for "${name}"?`)) {
+    delHigh(name);
+    updateLeaderboard();
+    setHighLabel(getHigh(name));
+    say(`Deleted score for "${name}".`);
+  }
+});
+
+// Init
+setScore(0);
+setHighLabel(getHigh(nameEl.value.trim()||"Player"));
+updateLeaderboard();
+</script>
+</body>
+</html>
