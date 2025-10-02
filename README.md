@@ -1,27 +1,29 @@
 <h1 align="center">Hi 👋, I'm Asad Ahmed</h1>
-<h3 align="center">A passionate Android app and website developer from Bangladesh with comprehensive computer knowledge and basic understanding of multiple programming languages, eager to learn, innovate, and create practical digital solutions.</h3>
+<h3 align="center">
+  Passionate Android & Web Developer from Bangladesh with solid computer knowledge and a strong foundation in multiple programming languages. I love learning, innovating, and building practical digital solutions.
+</h3>
 
-- 🌱 I’m currently learning **Flutter, IoT**
-
-- 👯 I’m looking to collaborate on **Android native and hybrid apps**
-
-- 👨‍💻 All of my projects are available at [asad1003](https://github.com/asad1003)
-
-- 💬 Ask me about **Everything**
-
-- 📫 How to reach me: **fahimanuri60@gmail.com**
+- 🌱 Currently learning **Flutter** and exploring **IoT** projects  
+- 👯 Looking to collaborate on **Android native & hybrid apps**  
+- 👨‍💻 Check out my projects: [GitHub - asad1003](https://github.com/asad1003)  
+- 💬 Ask me about **Android, Web, or any tech topic**  
+- 📫 Reach me: **fahimanuri60@gmail.com**  
 
 ---
 
 <h3 align="left">Connect with me:</h3>
 <p align="left">
-<a href="https://facebook.com/profile.php?id=100078980270381" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/facebook.svg" alt="Facebook" height="30" width="40" /></a>
-<a href="https://www.youtube.com/@asadzone522" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/youtube.svg" alt="YouTube" height="30" width="40" /></a>
+  <a href="https://facebook.com/profile.php?id=100078980270381" target="_blank">
+    <img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/facebook.svg" alt="Facebook" height="30" width="40" />
+  </a>
+  <a href="https://www.youtube.com/@asadzone522" target="_blank">
+    <img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/youtube.svg" alt="YouTube" height="30" width="40" />
+  </a>
 </p>
 
 ---
 
-<h3 align="left">Languages and Tools:</h3>
+<h3 align="left">Languages & Tools:</h3>
 <p align="left">
   <a href="https://developer.android.com" target="_blank"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/android/android-original-wordmark.svg" alt="Android" width="40" height="40"/></a>
   <a href="https://aws.amazon.com" target="_blank"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" alt="AWS" width="40" height="40"/></a>
@@ -37,15 +39,16 @@
 
 ---
 
-<h3 align="left">Support:</h3>
+<h3 align="left">Support Me:</h3>
 <p>
-<a href="https://www.buymeacoffee.com/bikash"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="50" width="210" alt="Buy Me A Coffee" /></a>
+  <a href="https://www.buymeacoffee.com/bikash" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="50" width="210" alt="Buy Me A Coffee" />
+  </a>
 </p>
 
 ---
 
-<h2>📊 GitHub Stats</h2>
-
+<h2 align="center">📊 GitHub Stats</h2>
 <p align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=asad1003&show_icons=true&theme=radical" alt="Asad's GitHub Stats" />
 </p>
