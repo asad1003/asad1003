@@ -1,5 +1,5 @@
 <h1 align="center">Hi 👋, I'm Asad Ahmed</h1>
-<h3 align="center">A passionate Android app developer from Bangladesh</h3>
+<h3 align="center">A passionate Android app and website developer from Bangladesh with comprehensive computer knowledge and basic understanding of multiple programming languages, eager to learn, innovate, and create practical digital solutions.</h3>
 
 - 🌱 I’m currently learning **Flutter, IoT**
 
